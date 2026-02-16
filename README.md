@@ -8,7 +8,12 @@
 
 点击下方按钮：
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new?template=https://github.com/cynthiaxu0529-art/fluxa-redpacket)
+<a href="https://vercel.com/new?project-name=fluxa-redpacket&repository-url=https://github.com/cynthiaxu0529-art/fluxa-redpacket"><img src="https://vercel.com/button" alt="Deploy with Vercel"></a>
+
+或直接访问：
+```
+https://vercel.com/new?project-name=fluxa-redpacket&repository-url=https://github.com/cynthiaxu0529-art/fluxa-redpacket
+```
 
 部署后访问：`https://fluxa-redpacket.vercel.app`
 
