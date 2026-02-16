@@ -474,6 +474,9 @@
       document.getElementById('previewMessage').textContent = message;
     }
     
+    // API Base URL (works on both local and Vercel)
+    const API_BASE = '';
+    
     // 连接钱包
     async function connectWallet() {
       const btn = document.getElementById('connectBtn');
@@ -484,13 +487,13 @@
       btn.textContent = '🔄 连接中...';
       
       try {
-        // 模拟钱包连接（实际会调用 FluxA Wallet API）
+        // 模拟钱包连接
         await new Promise(resolve => setTimeout(resolve, 1500));
         
         // 模拟连接成功
         walletConnected = true;
         walletAddress = '0x' + Math.random().toString(16).substr(2, 40);
-        balance = 100; // 模拟余额
+        balance = 100;
         
         status.textContent = `已连接 | ${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}`;
         status.style.color = '#6bcb77';
@@ -519,8 +522,8 @@
       const message = document.getElementById('message').value;
       const btn = document.getElementById('sendBtn');
       
-      if (!amount || amount < 0.1) {
-        showResult('请输入有效金额（最小 0.1 USDC）', 'error');
+      if (!amount || amount < 10 || amount > 20) {
+        showResult('请输入有效金额（10-20 USDC）', 'error');
         return;
       }
       
@@ -529,16 +532,10 @@
         return;
       }
       
-      if (amount > balance) {
-        showResult('余额不足！', 'error');
-        return;
-      }
-      
       btn.disabled = true;
       btn.textContent = '🧧 发送中...';
       
       try {
-        // 调用 FluxA Wallet API 发送红包
         const response = await fetch('/api/redpacket/send', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -741,19 +738,9 @@
     
     // 加载历史
     function loadHistory() {
-      // 从服务器加载
-      fetch('/api/redpacket/history/' + walletAddress)
-        .then(r => r.json())
-        .then(data => {
-          if (data.history) {
-            sentHistory = data.history;
-            renderHistory();
-          }
-        })
-        .catch(() => {
-          // 使用本地历史
-          renderHistory();
-        });
+      // Vercel serverless 不支持持久化存储，跳过
+      console.log('历史记录需要持久化存储（推荐 Railway）');
+      renderHistory();
     }
     
     // 渲染历史
@@ -777,15 +764,8 @@
       `).join('');
     }
     
-    // WebSocket 连接
-    const ws = new WebSocket((location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host);
-    
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'redpacket_sent') {
-        celebrate();
-      }
-    };
+    // WebSocket 连接（Vercel 不支持，保留用于本地）
+    // 实际部署时使用 polling 或其他实时方案
     
     // 检查 URL 中是否有红包
     checkForRedPacket();
