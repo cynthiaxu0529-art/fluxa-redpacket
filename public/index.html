@@ -329,6 +329,17 @@
       margin-top: 15px;
     }
     
+    .tx-hash {
+      text-align: center;
+      margin-top: 15px;
+      padding: 10px;
+      background: rgba(107, 203, 119, 0.2);
+      border-radius: 8px;
+      color: #6bcb77;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+    
     .opening {
       animation: pulse 0.5s infinite;
     }
@@ -407,6 +418,11 @@
     <div class="card" id="grabCard" style="display: none;">
       <h2>🧧 抢红包</h2>
       
+      <div class="input-group">
+        <label>你的 FluxA 钱包地址</label>
+        <input type="text" id="receiverWallet" placeholder="0x...">
+      </div>
+      
       <div class="redpacket-grab" id="redpacketGrabArea" onclick="grabRedPacket()">
         <div class="grab-icon">🧧</div>
         <div class="grab-text">点击拆红包</div>
@@ -417,7 +433,7 @@
 
     <!-- 收到的红包展示 -->
     <div class="card" id="receivedCard" style="display: none;">
-      <h2>🧧 你收到一个红包！</h2>
+      <h2>🧧 红包已入账！</h2>
       
       <div class="redpacket-received" id="redpacketReceived">
         <div class="received-amount" id="receivedAmount">0.00</div>
@@ -425,6 +441,7 @@
         <div class="received-message" id="receivedMessage"></div>
       </div>
       
+      <div class="tx-hash" id="txHash"></div>
       <div class="sender-info" id="senderInfo"></div>
     </div>
     
@@ -608,8 +625,23 @@
       return parseFloat(amount);
     }
     
+    // 获取随机金额（10 - 20 USDC）
+    function getRandomAmount() {
+      // 生成 10 到 20 之间的随机数，保留2位小数
+      const amount = (Math.random() * 10 + 10).toFixed(2);
+      return parseFloat(amount);
+    }
+    
     // 抢红包
     function grabRedPacket() {
+      const receiverWallet = document.getElementById('receiverWallet').value.trim();
+      
+      // 验证钱包地址
+      if (!receiverWallet || !receiverWallet.startsWith('0x') || receiverWallet.length < 42) {
+        showGrabResult('请输入有效的钱包地址（0x 开头）', 'error');
+        return;
+      }
+      
       const area = document.getElementById('redpacketGrabArea');
       const result = document.getElementById('grabResult');
       
@@ -617,31 +649,53 @@
       area.innerHTML = '<div class="grab-icon">🤔</div><div class="grab-text">计算中...</div>';
       
       // 模拟计算过程
-      setTimeout(() => {
+      setTimeout(async () => {
         const amount = getRandomAmount();
         const blessing = getRandomBlessing();
         
-        // 显示结果
-        area.style.display = 'none';
-        document.getElementById('receivedCard').style.display = 'block';
-        document.getElementById('receivedAmount').textContent = amount.toFixed(2);
-        document.getElementById('receivedMessage').textContent = blessing;
-        document.getElementById('senderInfo').textContent = '来自：神秘红包';
-        
-        // 庆祝
-        celebrate();
-        
-        // 发送到服务器
-        fetch('/api/redpacket/grab', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            amount: amount,
-            blessing: blessing
-          })
-        });
+        // 调用 Fluxapay API 执行转账
+        try {
+          const response = await fetch('/api/fluxapay/transfer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              to: receiverWallet,
+              amount: amount
+            })
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            // 转账成功，显示结果
+            area.style.display = 'none';
+            document.getElementById('receivedCard').style.display = 'block';
+            document.getElementById('receivedAmount').textContent = amount.toFixed(2);
+            document.getElementById('receivedMessage').textContent = blessing;
+            document.getElementById('senderInfo').textContent = '来自：神秘红包';
+            document.getElementById('txHash').innerHTML = `✅ Fluxapay 转账成功<br><code>${data.txHash}</code>`;
+            
+            // 庆祝
+            celebrate();
+          } else {
+            showGrabResult('转账失败: ' + data.error, 'error');
+            area.classList.remove('opening');
+            area.innerHTML = '<div class="grab-icon">🧧</div><div class="grab-text">点击拆红包</div>';
+          }
+        } catch (err) {
+          showGrabResult('转账错误: ' + err.message, 'error');
+          area.classList.remove('opening');
+          area.innerHTML = '<div class="grab-icon">🧧</div><div class="grab-text">点击拆红包</div>';
+        }
         
       }, 1500);
+    }
+    
+    function showGrabResult(message, type) {
+      const el = document.getElementById('grabResult');
+      el.className = `result ${type}`;
+      el.style.display = 'block';
+      el.innerHTML = message;
     }
     
     // 检查 URL 中是否有红包 ID

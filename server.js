@@ -190,18 +190,51 @@ app.get('/api/redpacket/info/:id', (req, res) => {
   });
 });
 
-// 抢红包（客户端生成随机金额）
-app.post('/api/redpacket/grab', (req, res) => {
-  const { amount, blessing } = req.body;
+// Fluxapay 转账 API
+app.post('/api/fluxapay/transfer', async (req, res) => {
+  const { to, amount } = req.body;
   
-  // 这里可以记录领取信息
-  console.log(`🧧 红包被领取: ${amount} USDC - "${blessing}"`);
+  // 验证参数
+  if (!to || !amount || amount < 10 || amount > 20) {
+    return res.status(400).json({
+      success: false,
+      error: 'Invalid parameters. Amount must be 10-20 USDC, and wallet address required.'
+    });
+  }
   
-  res.json({
-    success: true,
-    amount,
-    blessing
-  });
+  // 验证钱包地址格式
+  if (!to.startsWith('0x') || to.length !== 42) {
+    return res.status(400).json({
+      success: false,
+      error: 'Invalid wallet address format. Must be 0x followed by 40 hex characters.'
+    });
+  }
+  
+  // 这里调用真实的 Fluxapay API
+  // 模拟转账过程
+  try {
+    // 模拟 Fluxapay API 调用
+    const txHash = '0x' + uuidv4().replace(/-/g, '');
+    
+    // 模拟延迟
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    console.log(`💸 Fluxapay 转账: ${amount} USDC -> ${to}`);
+    console.log(`   交易哈希: ${txHash}`);
+    
+    res.json({
+      success: true,
+      txHash: txHash,
+      amount: amount,
+      to: to,
+      timestamp: new Date().toISOString()
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: 'Transfer failed: ' + err.message
+    });
+  }
 });
 
 // 获取所有交易记录
