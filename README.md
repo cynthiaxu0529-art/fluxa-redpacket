@@ -86,6 +86,27 @@ https://vercel.com/new?project-name=fluxa-redpacket&repository-url=https://githu
 
 ---
 
+## ⚙️ Vercel 环境变量配置
+
+### 需要配置的环境变量
+
+| 变量名 | 值 | 说明 |
+|--------|-----|------|
+| `FLUXA_WALLET_ADDRESS` | `0x577d7Ceb8325fdf13072623E42D739a15b1a0bD8` | Agent 钱包地址 |
+
+### 配置步骤
+
+1. 访问 Vercel 面板：https://vercel.com/dashboard
+2. 找到 `fluxa-redpacket` 项目
+3. 点击 **Settings** → **Environment Variables**
+4. 添加：
+   ```
+   FLUXA_WALLET_ADDRESS=0x577d7Ceb8325fdf13072623E42D739a15b1a0bD8
+   ```
+5. 保存后Redeploy
+
+---
+
 ## 📡 API 接口
 
 ### Fluxapay 转账
