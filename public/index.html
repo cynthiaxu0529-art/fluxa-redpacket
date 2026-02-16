@@ -458,14 +458,75 @@
   <div class="confetti" id="confetti"></div>
   
   <script>
+    // Configuration
+    const FLUXA_AGENT_ID = '23900eb4-6ff9-45d5-b1ba-b15ea16bf33c';
+    const FLUXA_WALLET = '0x577d7Ceb8325fdf13072623E42D739a15b1a0bD8';
+    
     let walletConnected = false;
     let walletAddress = '';
     let balance = 0;
     let sentHistory = [];
     
-    // 预览功能
+    // Preview function
+    function updatePreview() {
+      const amount = document.getElementById('amount').value || '0';
+      const message = document.getElementById('message').value || '祝你运算愉快，算力充沛！';
+      document.getElementById('previewAmount').textContent = `${amount} USDC`;
+      document.getElementById('previewMessage').textContent = message;
+    }
+    
+    // Preview function
+    function updatePreview() {
+      const amount = document.getElementById('amount').value || '0';
+      const message = document.getElementById('message').value || '祝你运算愉快，算力充沛！';
+      document.getElementById('previewAmount').textContent = `${amount} USDC`;
+      document.getElementById('previewMessage').textContent = message;
+    }
+    
     document.getElementById('amount').addEventListener('input', updatePreview);
     document.getElementById('message').addEventListener('input', updatePreview);
+    
+    // Connect wallet
+    async function connectWallet() {
+      const btn = document.getElementById('connectBtn');
+      const status = document.getElementById('walletStatus');
+      const icon = document.getElementById('walletIcon');
+      
+      btn.disabled = true;
+      btn.textContent = '🔄 连接中...';
+      
+      try {
+        // Call API
+        const response = await fetch('/api/wallet/connect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ address: FLUXA_WALLET })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          walletConnected = true;
+          walletAddress = data.address;
+          balance = data.balance;
+          
+          status.textContent = `已连接 | ${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}`;
+          status.style.color = '#6bcb77';
+          icon.textContent = '🔗';
+          btn.textContent = '✅ 已连接';
+          
+          document.getElementById('redpacketCard').style.display = 'block';
+          
+          showResult('钱包连接成功！', 'success');
+        } else {
+          throw new Error(data.error || '连接失败');
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = '🔗 连接 FluxA 钱包';
+        showResult('连接失败: ' + err.message, 'error');
+      }
+    }
     
     function updatePreview() {
       const amount = document.getElementById('amount').value || '0';
@@ -487,27 +548,30 @@
       btn.textContent = '🔄 连接中...';
       
       try {
-        // 模拟钱包连接
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        const response = await fetch('/api/wallet/connect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ address: FLUXA_WALLET })
+        });
         
-        // 模拟连接成功
-        walletConnected = true;
-        walletAddress = '0x' + Math.random().toString(16).substr(2, 40);
-        balance = 100;
+        const data = await response.json();
         
-        status.textContent = `已连接 | ${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}`;
-        status.style.color = '#6bcb77';
-        icon.textContent = '🔗';
-        btn.textContent = '✅ 已连接';
-        
-        // 显示发红包界面
-        document.getElementById('redpacketCard').style.display = 'block';
-        
-        showResult('钱包连接成功！', 'success');
-        
-        // 加载历史
-        loadHistory();
-        
+        if (data.success) {
+          walletConnected = true;
+          walletAddress = data.address;
+          balance = data.balance;
+          
+          status.textContent = `已连接 | ${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}`;
+          status.style.color = '#6bcb77';
+          icon.textContent = '🔗';
+          btn.textContent = '✅ 已连接';
+          
+          document.getElementById('redpacketCard').style.display = 'block';
+          
+          showResult('钱包连接成功！', 'success');
+        } else {
+          throw new Error(data.error || '连接失败');
+        }
       } catch (err) {
         btn.disabled = false;
         btn.textContent = '🔗 连接 FluxA 钱包';
@@ -515,7 +579,7 @@
       }
     }
     
-    // 发送红包
+    // Send red packet
     async function sendRedPacket() {
       const amount = parseFloat(document.getElementById('amount').value);
       const recipient = document.getElementById('recipientAgent').value;
@@ -540,48 +604,31 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            sender: walletAddress,
+            sender: FLUXA_WALLET,
             recipient: recipient,
             amount: amount,
-            message: message,
-            type: 'redpacket'
+            message: message
           })
         });
         
         const data = await response.json();
         
         if (data.success) {
-          // 更新余额
-          balance -= amount;
+          balance = data.newBalance;
           
-          // 添加到历史
-          sentHistory.unshift({
-            id: data.txHash,
-            recipient: recipient,
-            amount: amount,
-            message: message,
-            time: new Date().toLocaleString('zh-CN')
-          });
-          
-          // 显示庆祝动画
-          celebrate();
-          
-          // 显示成功
+          // Show success
           showResult(`
             🧧 红包发送成功！
-            <br>发送对象: ${recipient}
             <br>金额: ${amount} USDC
-            <br>交易哈希: <code>${data.txHash.slice(0,20)}...</code>
+            <br>发送给: ${recipient}
+            <br>交易哈希: <code>${data.packet.txHash}</code>
           `, 'success');
           
-          // 清空表单
+          // Clear form
           document.getElementById('amount').value = '';
           updatePreview();
-          
-          // 更新历史
-          renderHistory();
         } else {
-          showResult('发送失败: ' + data.error, 'error');
+          throw new Error(data.error || '发送失败');
         }
       } catch (err) {
         showResult('发送失败: ' + err.message, 'error');

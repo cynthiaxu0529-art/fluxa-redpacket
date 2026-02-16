@@ -5,6 +5,9 @@ const { v4: uuidv4 } = require('uuid');
 const wallets = {};
 const transactions = [];
 
+// FluxA Agent Wallet (from environment or default)
+const FLUXA_WALLET = process.env.FLUXA_WALLET_ADDRESS || '0x577d7Ceb8325fdf13072623E42D739a15b1a0bD8';
+
 module.exports = async (req, res) => {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -17,13 +20,22 @@ module.exports = async (req, res) => {
   
   const { method, url } = req;
   
-  // Connect wallet
+  // Get FluxA wallet info
+  if (method === 'GET' && url === '/api/fluxa-wallet') {
+    return res.json({
+      address: FLUXA_WALLET,
+      agentId: '23900eb4-6ff9-45d5-b1ba-b15ea16bf33c'
+    });
+  }
+  
+  // Connect wallet (returns mock for demo)
   if (method === 'POST' && url === '/api/wallet/connect') {
     const { address } = req.body;
     
+    // Initialize with test balance
     if (!wallets[address]) {
       wallets[address] = {
-        balance: 1000,
+        balance: 1000, // Test balance
         sentPackets: [],
         receivedPackets: []
       };
