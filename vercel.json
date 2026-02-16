@@ -9,17 +9,5 @@
       "src": "api/**/*.js",
       "use": "@vercel/node"
     }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/index.js"
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "/api/:path*"
-    }
   ]
 }
