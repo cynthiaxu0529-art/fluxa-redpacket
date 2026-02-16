@@ -171,6 +171,39 @@ app.get('/api/redpacket/history/:address', (req, res) => {
   });
 });
 
+// 获取红包信息
+app.get('/api/redpacket/info/:id', (req, res) => {
+  const { id } = req.params;
+  const packet = transactions.find(t => t.id === id);
+  
+  if (!packet) {
+    return res.status(404).json({ error: '红包不存在' });
+  }
+  
+  res.json({
+    packet: {
+      id: packet.id,
+      sender: packet.sender,
+      amount: packet.amount,
+      blessing: packet.message
+    }
+  });
+});
+
+// 抢红包（客户端生成随机金额）
+app.post('/api/redpacket/grab', (req, res) => {
+  const { amount, blessing } = req.body;
+  
+  // 这里可以记录领取信息
+  console.log(`🧧 红包被领取: ${amount} USDC - "${blessing}"`);
+  
+  res.json({
+    success: true,
+    amount,
+    blessing
+  });
+});
+
 // 获取所有交易记录
 app.get('/api/transactions', (req, res) => {
   res.json({
@@ -274,7 +307,7 @@ app.get('/redpacket/:id', (req, res) => {
 
 // ========== 启动 ==========
 
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3003;
 
 server.listen(PORT, () => {
   console.log(`

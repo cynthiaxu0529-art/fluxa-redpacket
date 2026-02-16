@@ -261,6 +261,83 @@
       100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
     }
     
+    .redpacket-grab {
+      background: linear-gradient(135deg, #ff6b6b, #d63031);
+      border-radius: 20px;
+      padding: 60px 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin: 30px 0;
+    }
+    
+    .redpacket-grab:hover {
+      transform: scale(1.05);
+      box-shadow: 0 20px 40px rgba(255, 107, 107, 0.4);
+    }
+    
+    .grab-icon {
+      font-size: 5em;
+      margin-bottom: 20px;
+      animation: shake 2s infinite;
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: rotate(-5deg); }
+      50% { transform: rotate(5deg); }
+    }
+    
+    .grab-text {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: white;
+    }
+    
+    .redpacket-received {
+      background: linear-gradient(135deg, #ffd93d, #ff6b6b);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      margin: 20px 0;
+    }
+    
+    .received-amount {
+      font-size: 4em;
+      font-weight: bold;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .received-label {
+      font-size: 1.5em;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 20px;
+    }
+    
+    .received-message {
+      font-size: 1.2em;
+      color: white;
+      font-style: italic;
+      padding: 15px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 10px;
+    }
+    
+    .sender-info {
+      text-align: center;
+      color: #aaa;
+      margin-top: 15px;
+    }
+    
+    .opening {
+      animation: pulse 0.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    
     .mcp-badge {
       display: inline-block;
       background: linear-gradient(90deg, #ff6b6b, #6bcb77);
@@ -324,6 +401,31 @@
       </button>
       
       <div id="result" class="result"></div>
+    </div>
+
+    <!-- 抢红包 -->
+    <div class="card" id="grabCard" style="display: none;">
+      <h2>🧧 抢红包</h2>
+      
+      <div class="redpacket-grab" id="redpacketGrabArea" onclick="grabRedPacket()">
+        <div class="grab-icon">🧧</div>
+        <div class="grab-text">点击拆红包</div>
+      </div>
+      
+      <div id="grabResult" class="result"></div>
+    </div>
+
+    <!-- 收到的红包展示 -->
+    <div class="card" id="receivedCard" style="display: none;">
+      <h2>🧧 你收到一个红包！</h2>
+      
+      <div class="redpacket-received" id="redpacketReceived">
+        <div class="received-amount" id="receivedAmount">0.00</div>
+        <div class="received-label">USDC</div>
+        <div class="received-message" id="receivedMessage"></div>
+      </div>
+      
+      <div class="sender-info" id="senderInfo"></div>
     </div>
     
     <!-- 发送历史 -->
@@ -475,8 +577,92 @@
       }
     }
     
-    // 庆祝动画
-    function celebrate() {
+    // 马年祝福语库
+    const horseBlessings = [
+      "马到成功！运算飞速！",
+      "一马当先，算力无限！",
+      "龙马精神，代码奔腾！",
+      "马不停蹄，运算不息！",
+      "汗马功劳，AI 称霸！",
+      "千军万马，算力充沛！",
+      "快马加鞭，模型飞驰！",
+      "万马奔腾，性能飙升！",
+      "马到功成，精度爆表！",
+      "一马平川，算法无阻！",
+      "马不停蹄，响应极速！",
+      "龙马精神，创意无限！",
+      "马到成功，推理神速！",
+      "快马加鞭，训练加速！",
+      "万马奔腾，算力爆发！"
+    ];
+    
+    // 获取随机祝福语（带"马"字）
+    function getRandomBlessing() {
+      return horseBlessings[Math.floor(Math.random() * horseBlessings.length)];
+    }
+    
+    // 获取随机金额（0.01 - 5 USDC）
+    function getRandomAmount() {
+      // 生成 0.01 到 5.00 之间的随机数，保留2位小数
+      const amount = (Math.random() * 4.99 + 0.01).toFixed(2);
+      return parseFloat(amount);
+    }
+    
+    // 抢红包
+    function grabRedPacket() {
+      const area = document.getElementById('redpacketGrabArea');
+      const result = document.getElementById('grabResult');
+      
+      area.classList.add('opening');
+      area.innerHTML = '<div class="grab-icon">🤔</div><div class="grab-text">计算中...</div>';
+      
+      // 模拟计算过程
+      setTimeout(() => {
+        const amount = getRandomAmount();
+        const blessing = getRandomBlessing();
+        
+        // 显示结果
+        area.style.display = 'none';
+        document.getElementById('receivedCard').style.display = 'block';
+        document.getElementById('receivedAmount').textContent = amount.toFixed(2);
+        document.getElementById('receivedMessage').textContent = blessing;
+        document.getElementById('senderInfo').textContent = '来自：神秘红包';
+        
+        // 庆祝
+        celebrate();
+        
+        // 发送到服务器
+        fetch('/api/redpacket/grab', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: amount,
+            blessing: blessing
+          })
+        });
+        
+      }, 1500);
+    }
+    
+    // 检查 URL 中是否有红包 ID
+    function checkForRedPacket() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const packetId = urlParams.get('packet');
+      
+      if (packetId) {
+        // 显示抢红包界面
+        document.getElementById('grabCard').style.display = 'block';
+        
+        // 获取红包信息
+        fetch('/api/redpacket/info/' + packetId)
+          .then(r => r.json())
+          .then(data => {
+            if (data.packet) {
+              document.getElementById('senderInfo').textContent = '来自：' + data.packet.sender;
+            }
+          });
+      }
+    }
       const container = document.getElementById('confetti');
       container.innerHTML = '';
       
@@ -546,6 +732,9 @@
         celebrate();
       }
     };
+    
+    // 检查 URL 中是否有红包
+    checkForRedPacket();
   </script>
 </body>
 </html>
