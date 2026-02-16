@@ -342,7 +342,7 @@ app.get('/redpacket/:id', (req, res) => {
 
 const PORT = process.env.PORT || 3003;
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`
 ╔════════════════════════════════════════════════════╗
 ║                                                    ║
