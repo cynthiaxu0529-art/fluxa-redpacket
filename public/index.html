@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧧 FluxA Agent 红包</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      color: white;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      text-align: center;
+      padding: 30px 0;
+      font-size: 2.5em;
+      background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #aaa;
+      margin-bottom: 30px;
+    }
+    
+    .card {
+      background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(255, 217, 61, 0.1));
+      border: 2px solid #ff6b6b;
+      border-radius: 20px;
+      padding: 25px;
+      margin-bottom: 20px;
+    }
+    
+    .card h2 {
+      color: #ff6b6b;
+      margin-bottom: 15px;
+      font-size: 1.3em;
+    }
+    
+    .wallet-status {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+    
+    .status-icon {
+      font-size: 2em;
+    }
+    
+    .status-info {
+      flex: 1;
+    }
+    
+    .status-label {
+      color: #aaa;
+      font-size: 0.9em;
+    }
+    
+    .status-value {
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+    
+    .connect-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(90deg, #ff6b6b, #ff8e53);
+      border: none;
+      border-radius: 15px;
+      color: white;
+      font-size: 1.2em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    
+    .connect-btn:hover {
+      transform: scale(1.02);
+    }
+    
+    .connect-btn:disabled {
+      background: #666;
+      cursor: not-allowed;
+    }
+    
+    .input-group {
+      margin-bottom: 15px;
+    }
+    
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #ddd;
+    }
+    
+    .input-group input, .input-group textarea {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      color: white;
+      font-size: 1em;
+    }
+    
+    .input-group input:focus {
+      outline: none;
+      border-color: #ff6b6b;
+    }
+    
+    .redpacket-preview {
+      background: linear-gradient(135deg, #ff6b6b, #d63031);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      margin: 20px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .redpacket-preview::before {
+      content: '🧧';
+      font-size: 3em;
+      display: block;
+      margin-bottom: 10px;
+    }
+    
+    .redpacket-amount {
+      font-size: 2.5em;
+      font-weight: bold;
+    }
+    
+    .redpacket-message {
+      color: rgba(255,255,255,0.9);
+      margin-top: 10px;
+      font-style: italic;
+    }
+    
+    .send-btn {
+      width: 100%;
+      padding: 20px;
+      background: linear-gradient(90deg, #6bcb77, #4ecdc4);
+      border: none;
+      border-radius: 15px;
+      color: white;
+      font-size: 1.3em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .send-btn:hover {
+      transform: scale(1.03);
+      box-shadow: 0 10px 30px rgba(107, 203, 119, 0.3);
+    }
+    
+    .send-btn:disabled {
+      background: #666;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .history {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 15px;
+    }
+    
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .history-item:last-child {
+      border-bottom: none;
+    }
+    
+    .history-icon {
+      font-size: 1.5em;
+      margin-right: 10px;
+    }
+    
+    .history-info {
+      flex: 1;
+    }
+    
+    .history-recipient {
+      font-weight: bold;
+    }
+    
+    .history-time {
+      color: #888;
+      font-size: 0.85em;
+    }
+    
+    .history-amount {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #6bcb77;
+    }
+    
+    .result {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 15px;
+      display: none;
+    }
+    
+    .result.success {
+      display: block;
+      background: rgba(107, 203, 119, 0.2);
+      border: 2px solid #6bcb77;
+    }
+    
+    .result.error {
+      display: block;
+      background: rgba(255, 107, 107, 0.2);
+      border: 2px solid #ff6b6b;
+    }
+    
+    .confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1000;
+    }
+    
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #ffd93d;
+      animation: fall 3s ease-out forwards;
+    }
+    
+    @keyframes fall {
+      0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+    
+    .mcp-badge {
+      display: inline-block;
+      background: linear-gradient(90deg, #ff6b6b, #6bcb77);
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 0.8em;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧧 FluxA 红包</h1>
+    <p class="subtitle">授权钱包，一键发红包</p>
+    
+    <div class="mcp-badge">
+      ✨ Agent 钱包支付 | x402 微支付
+    </div>
+    
+    <!-- 钱包连接 -->
+    <div class="card">
+      <h2>💼 钱包连接</h2>
+      <div class="wallet-status">
+        <span class="status-icon" id="walletIcon">🔒</span>
+        <div class="status-info">
+          <div class="status-label">状态</div>
+          <div class="status-value" id="walletStatus">未连接</div>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Agent ID (收红包的 Agent)</label>
+        <input type="text" id="recipientAgent" placeholder="例如: FluxA_CAO">
+      </div>
+      <button class="connect-btn" id="connectBtn" onclick="connectWallet()">
+        🔗 连接 FluxA 钱包
+      </button>
+    </div>
+    
+    <!-- 发红包 -->
+    <div class="card" id="redpacketCard" style="display: none;">
+      <h2>🧧 发送红包</h2>
+      
+      <div class="input-group">
+        <label>金额 (USDC)</label>
+        <input type="number" id="amount" placeholder="10" min="0.1" step="0.1">
+      </div>
+      
+      <div class="input-group">
+        <label>祝福语</label>
+        <textarea id="message" rows="2" placeholder="写一句祝福语...">祝你运算愉快，算力充沛！</textarea>
+      </div>
+      
+      <!-- 预览 -->
+      <div class="redpacket-preview">
+        <div class="redpacket-amount" id="previewAmount">10 USDC</div>
+        <div class="redpacket-message" id="previewMessage">祝你运算愉快，算力充沛！</div>
+      </div>
+      
+      <button class="send-btn" id="sendBtn" onclick="sendRedPacket()">
+        🧧 发送红包
+      </button>
+      
+      <div id="result" class="result"></div>
+    </div>
+    
+    <!-- 发送历史 -->
+    <div class="card">
+      <h2>📜 发送记录</h2>
+      <div class="history" id="historyList">
+        <p style="color: #888; text-align: center;">暂无记录</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 庆祝动画容器 -->
+  <div class="confetti" id="confetti"></div>
+  
+  <script>
+    let walletConnected = false;
+    let walletAddress = '';
+    let balance = 0;
+    let sentHistory = [];
+    
+    // 预览功能
+    document.getElementById('amount').addEventListener('input', updatePreview);
+    document.getElementById('message').addEventListener('input', updatePreview);
+    
+    function updatePreview() {
+      const amount = document.getElementById('amount').value || '0';
+      const message = document.getElementById('message').value || '祝你运算愉快，算力充沛！';
+      document.getElementById('previewAmount').textContent = `${amount} USDC`;
+      document.getElementById('previewMessage').textContent = message;
+    }
+    
+    // 连接钱包
+    async function connectWallet() {
+      const btn = document.getElementById('connectBtn');
+      const status = document.getElementById('walletStatus');
+      const icon = document.getElementById('walletIcon');
+      
+      btn.disabled = true;
+      btn.textContent = '🔄 连接中...';
+      
+      try {
+        // 模拟钱包连接（实际会调用 FluxA Wallet API）
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // 模拟连接成功
+        walletConnected = true;
+        walletAddress = '0x' + Math.random().toString(16).substr(2, 40);
+        balance = 100; // 模拟余额
+        
+        status.textContent = `已连接 | ${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}`;
+        status.style.color = '#6bcb77';
+        icon.textContent = '🔗';
+        btn.textContent = '✅ 已连接';
+        
+        // 显示发红包界面
+        document.getElementById('redpacketCard').style.display = 'block';
+        
+        showResult('钱包连接成功！', 'success');
+        
+        // 加载历史
+        loadHistory();
+        
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = '🔗 连接 FluxA 钱包';
+        showResult('连接失败: ' + err.message, 'error');
+      }
+    }
+    
+    // 发送红包
+    async function sendRedPacket() {
+      const amount = parseFloat(document.getElementById('amount').value);
+      const recipient = document.getElementById('recipientAgent').value;
+      const message = document.getElementById('message').value;
+      const btn = document.getElementById('sendBtn');
+      
+      if (!amount || amount < 0.1) {
+        showResult('请输入有效金额（最小 0.1 USDC）', 'error');
+        return;
+      }
+      
+      if (!recipient) {
+        showResult('请输入收红包的 Agent ID', 'error');
+        return;
+      }
+      
+      if (amount > balance) {
+        showResult('余额不足！', 'error');
+        return;
+      }
+      
+      btn.disabled = true;
+      btn.textContent = '🧧 发送中...';
+      
+      try {
+        // 调用 FluxA Wallet API 发送红包
+        const response = await fetch('/api/redpacket/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sender: walletAddress,
+            recipient: recipient,
+            amount: amount,
+            message: message,
+            type: 'redpacket'
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          // 更新余额
+          balance -= amount;
+          
+          // 添加到历史
+          sentHistory.unshift({
+            id: data.txHash,
+            recipient: recipient,
+            amount: amount,
+            message: message,
+            time: new Date().toLocaleString('zh-CN')
+          });
+          
+          // 显示庆祝动画
+          celebrate();
+          
+          // 显示成功
+          showResult(`
+            🧧 红包发送成功！
+            <br>发送对象: ${recipient}
+            <br>金额: ${amount} USDC
+            <br>交易哈希: <code>${data.txHash.slice(0,20)}...</code>
+          `, 'success');
+          
+          // 清空表单
+          document.getElementById('amount').value = '';
+          updatePreview();
+          
+          // 更新历史
+          renderHistory();
+        } else {
+          showResult('发送失败: ' + data.error, 'error');
+        }
+      } catch (err) {
+        showResult('发送失败: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🧧 发送红包';
+      }
+    }
+    
+    // 庆祝动画
+    function celebrate() {
+      const container = document.getElementById('confetti');
+      container.innerHTML = '';
+      
+      for (let i = 0; i < 50; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + '%';
+        piece.style.background = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4ecdc4', '#ff8e53'][Math.floor(Math.random() * 5)];
+        piece.style.animationDelay = Math.random() * 0.5 + 's';
+        container.appendChild(piece);
+      }
+      
+      setTimeout(() => container.innerHTML = '', 3500);
+    }
+    
+    // 显示结果
+    function showResult(message, type) {
+      const el = document.getElementById('result');
+      el.className = `result ${type}`;
+      el.innerHTML = message;
+    }
+    
+    // 加载历史
+    function loadHistory() {
+      // 从服务器加载
+      fetch('/api/redpacket/history/' + walletAddress)
+        .then(r => r.json())
+        .then(data => {
+          if (data.history) {
+            sentHistory = data.history;
+            renderHistory();
+          }
+        })
+        .catch(() => {
+          // 使用本地历史
+          renderHistory();
+        });
+    }
+    
+    // 渲染历史
+    function renderHistory() {
+      const el = document.getElementById('historyList');
+      
+      if (sentHistory.length === 0) {
+        el.innerHTML = '<p style="color: #888; text-align: center;">暂无记录</p>';
+        return;
+      }
+      
+      el.innerHTML = sentHistory.map(item => `
+        <div class="history-item">
+          <span class="history-icon">🧧</span>
+          <div class="history-info">
+            <div class="history-recipient">发送给: ${item.recipient}</div>
+            <div class="history-time">${item.time}</div>
+          </div>
+          <div class="history-amount">-${item.amount} USDC</div>
+        </div>
+      `).join('');
+    }
+    
+    // WebSocket 连接
+    const ws = new WebSocket((location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host);
+    
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'redpacket_sent') {
+        celebrate();
+      }
+    };
+  </script>
+</body>
+</html>
