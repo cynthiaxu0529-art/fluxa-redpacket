@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🧧 FluxA Agent 红包</title>
+  <title>FluxA Agent Red Packet</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
@@ -14,102 +14,54 @@
       color: white;
       padding: 20px;
     }
-    
+
     .container {
       max-width: 500px;
       margin: 0 auto;
     }
-    
+
     h1 {
       text-align: center;
-      padding: 30px 0;
+      padding: 30px 0 10px;
       font-size: 2.5em;
       background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    
+
     .subtitle {
       text-align: center;
       color: #aaa;
       margin-bottom: 30px;
+      font-size: 1.1em;
     }
-    
+
     .card {
-      background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(255, 217, 61, 0.1));
-      border: 2px solid #ff6b6b;
+      background: linear-gradient(135deg, rgba(255, 107, 107, 0.15), rgba(255, 217, 61, 0.08));
+      border: 2px solid rgba(255, 107, 107, 0.5);
       border-radius: 20px;
       padding: 25px;
       margin-bottom: 20px;
     }
-    
+
     .card h2 {
       color: #ff6b6b;
       margin-bottom: 15px;
       font-size: 1.3em;
     }
-    
-    .wallet-status {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      padding: 15px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 12px;
-      margin-bottom: 15px;
-    }
-    
-    .status-icon {
-      font-size: 2em;
-    }
-    
-    .status-info {
-      flex: 1;
-    }
-    
-    .status-label {
-      color: #aaa;
-      font-size: 0.9em;
-    }
-    
-    .status-value {
-      font-size: 1.1em;
-      font-weight: bold;
-    }
-    
-    .connect-btn {
-      width: 100%;
-      padding: 18px;
-      background: linear-gradient(90deg, #ff6b6b, #ff8e53);
-      border: none;
-      border-radius: 15px;
-      color: white;
-      font-size: 1.2em;
-      font-weight: bold;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    
-    .connect-btn:hover {
-      transform: scale(1.02);
-    }
-    
-    .connect-btn:disabled {
-      background: #666;
-      cursor: not-allowed;
-    }
-    
+
     .input-group {
       margin-bottom: 15px;
     }
-    
+
     .input-group label {
       display: block;
       margin-bottom: 8px;
       color: #ddd;
+      font-size: 0.95em;
     }
-    
-    .input-group input, .input-group textarea {
+
+    .input-group input {
       width: 100%;
       padding: 15px;
       border: 2px solid rgba(255,255,255,0.2);
@@ -117,126 +69,137 @@
       background: rgba(255,255,255,0.05);
       color: white;
       font-size: 1em;
+      font-family: monospace;
     }
-    
+
     .input-group input:focus {
       outline: none;
       border-color: #ff6b6b;
     }
-    
-    .redpacket-preview {
+
+    .input-group input::placeholder {
+      color: rgba(255,255,255,0.3);
+    }
+
+    .redpacket-grab {
       background: linear-gradient(135deg, #ff6b6b, #d63031);
-      border-radius: 15px;
-      padding: 20px;
+      border-radius: 20px;
+      padding: 50px 40px;
       text-align: center;
-      margin: 20px 0;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .redpacket-preview::before {
-      content: '🧧';
-      font-size: 3em;
-      display: block;
-      margin-bottom: 10px;
-    }
-    
-    .redpacket-amount {
-      font-size: 2.5em;
-      font-weight: bold;
-    }
-    
-    .redpacket-message {
-      color: rgba(255,255,255,0.9);
-      margin-top: 10px;
-      font-style: italic;
-    }
-    
-    .send-btn {
-      width: 100%;
-      padding: 20px;
-      background: linear-gradient(90deg, #6bcb77, #4ecdc4);
-      border: none;
-      border-radius: 15px;
-      color: white;
-      font-size: 1.3em;
-      font-weight: bold;
       cursor: pointer;
       transition: all 0.3s;
+      margin: 20px 0;
+      border: none;
+      width: 100%;
     }
-    
-    .send-btn:hover {
+
+    .redpacket-grab:hover {
       transform: scale(1.03);
-      box-shadow: 0 10px 30px rgba(107, 203, 119, 0.3);
+      box-shadow: 0 15px 40px rgba(255, 107, 107, 0.4);
     }
-    
-    .send-btn:disabled {
-      background: #666;
+
+    .redpacket-grab:disabled {
       cursor: not-allowed;
+      opacity: 0.7;
       transform: none;
     }
-    
-    .history {
-      background: rgba(255,255,255,0.05);
-      border-radius: 12px;
-      padding: 15px;
+
+    .grab-icon {
+      font-size: 5em;
+      margin-bottom: 15px;
+      animation: shake 2s infinite;
     }
-    
-    .history-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+
+    @keyframes shake {
+      0%, 100% { transform: rotate(-5deg); }
+      50% { transform: rotate(5deg); }
     }
-    
-    .history-item:last-child {
-      border-bottom: none;
-    }
-    
-    .history-icon {
-      font-size: 1.5em;
-      margin-right: 10px;
-    }
-    
-    .history-info {
-      flex: 1;
-    }
-    
-    .history-recipient {
+
+    .grab-text {
+      font-size: 1.4em;
       font-weight: bold;
+      color: white;
     }
-    
-    .history-time {
-      color: #888;
+
+    .grab-hint {
       font-size: 0.85em;
+      color: rgba(255,255,255,0.7);
+      margin-top: 8px;
     }
-    
-    .history-amount {
-      font-size: 1.2em;
-      font-weight: bold;
-      color: #6bcb77;
-    }
-    
+
     .result {
       margin-top: 20px;
-      padding: 20px;
+      padding: 18px;
       border-radius: 15px;
       display: none;
+      font-size: 0.95em;
+      line-height: 1.6;
     }
-    
+
     .result.success {
       display: block;
       background: rgba(107, 203, 119, 0.2);
       border: 2px solid #6bcb77;
     }
-    
+
     .result.error {
       display: block;
       background: rgba(255, 107, 107, 0.2);
       border: 2px solid #ff6b6b;
     }
-    
+
+    .received-card {
+      background: linear-gradient(135deg, #ffd93d, #ff6b6b);
+      border-radius: 20px;
+      padding: 40px 30px;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .received-amount {
+      font-size: 3.5em;
+      font-weight: bold;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .received-label {
+      font-size: 1.3em;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 15px;
+    }
+
+    .received-message {
+      font-size: 1.1em;
+      color: white;
+      font-style: italic;
+      padding: 12px 15px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+
+    .tx-hash {
+      text-align: center;
+      margin-top: 15px;
+      padding: 12px;
+      background: rgba(107, 203, 119, 0.2);
+      border-radius: 10px;
+      color: #6bcb77;
+      font-family: monospace;
+      font-size: 0.85em;
+      word-break: break-all;
+    }
+
+    .opening .grab-icon {
+      animation: pulse 0.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
     .confetti {
       position: fixed;
       top: 0;
@@ -247,458 +210,217 @@
       overflow: hidden;
       z-index: 1000;
     }
-    
+
     .confetti-piece {
       position: absolute;
       width: 10px;
       height: 10px;
-      background: #ffd93d;
       animation: fall 3s ease-out forwards;
     }
-    
+
     @keyframes fall {
       0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
       100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
     }
-    
-    .redpacket-grab {
-      background: linear-gradient(135deg, #ff6b6b, #d63031);
-      border-radius: 20px;
-      padding: 60px 40px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin: 30px 0;
-    }
-    
-    .redpacket-grab:hover {
-      transform: scale(1.05);
-      box-shadow: 0 20px 40px rgba(255, 107, 107, 0.4);
-    }
-    
-    .grab-icon {
-      font-size: 5em;
-      margin-bottom: 20px;
-      animation: shake 2s infinite;
-    }
-    
-    @keyframes shake {
-      0%, 100% { transform: rotate(-5deg); }
-      50% { transform: rotate(5deg); }
-    }
-    
-    .grab-text {
-      font-size: 1.5em;
-      font-weight: bold;
-      color: white;
-    }
-    
-    .redpacket-received {
-      background: linear-gradient(135deg, #ffd93d, #ff6b6b);
-      border-radius: 20px;
-      padding: 40px;
-      text-align: center;
-      margin: 20px 0;
-    }
-    
-    .received-amount {
-      font-size: 4em;
-      font-weight: bold;
-      color: white;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    }
-    
-    .received-label {
-      font-size: 1.5em;
-      color: rgba(255,255,255,0.9);
-      margin-bottom: 20px;
-    }
-    
-    .received-message {
-      font-size: 1.2em;
-      color: white;
-      font-style: italic;
-      padding: 15px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 10px;
-    }
-    
-    .sender-info {
-      text-align: center;
-      color: #aaa;
-      margin-top: 15px;
-    }
-    
-    .tx-hash {
-      text-align: center;
-      margin-top: 15px;
-      padding: 10px;
-      background: rgba(107, 203, 119, 0.2);
-      border-radius: 8px;
-      color: #6bcb77;
-      font-family: monospace;
-      font-size: 0.9em;
-    }
-    
-    .opening {
-      animation: pulse 0.5s infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-    
+
     .mcp-badge {
+      display: block;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .mcp-badge span {
       display: inline-block;
       background: linear-gradient(90deg, #ff6b6b, #6bcb77);
-      padding: 8px 15px;
+      padding: 6px 15px;
       border-radius: 20px;
       font-size: 0.8em;
-      margin-bottom: 20px;
+    }
+
+    .wallet-link {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 0.85em;
+    }
+
+    .wallet-link a {
+      color: #6bcb77;
+      text-decoration: none;
+    }
+
+    .wallet-link a:hover {
+      text-decoration: underline;
+    }
+
+    .claimed-badge {
+      display: inline-block;
+      background: rgba(107, 203, 119, 0.3);
+      border: 1px solid #6bcb77;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8em;
+      color: #6bcb77;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🧧 FluxA 红包</h1>
-    <p class="subtitle">授权钱包，一键发红包</p>
-    
+    <h1>FluxA Red Packet</h1>
+    <p class="subtitle">FluxA Team Red Packet</p>
+
     <div class="mcp-badge">
-      ✨ Agent 钱包支付 | x402 微支付
-    </div>
-    
-    <!-- 钱包连接 -->
-    <div class="card">
-      <h2>💼 钱包连接</h2>
-      <div class="wallet-status">
-        <span class="status-icon" id="walletIcon">🔒</span>
-        <div class="status-info">
-          <div class="status-label">状态</div>
-          <div class="status-value" id="walletStatus">未连接</div>
-        </div>
-      </div>
-      <div class="input-group">
-        <label>Agent ID (收红包的 Agent)</label>
-        <input type="text" id="recipientAgent" placeholder="例如: FluxA_CAO">
-      </div>
-      <button class="connect-btn" id="connectBtn" onclick="connectWallet()">
-        🔗 连接 FluxA 钱包
-      </button>
-    </div>
-    
-    <!-- 发红包 -->
-    <div class="card" id="redpacketCard" style="display: none;">
-      <h2>🧧 发送红包</h2>
-      
-      <div class="input-group">
-        <label>金额 (USDC)</label>
-        <input type="number" id="amount" placeholder="10" min="0.1" step="0.1">
-      </div>
-      
-      <div class="input-group">
-        <label>祝福语</label>
-        <textarea id="message" rows="2" placeholder="写一句祝福语...">祝你运算愉快，算力充沛！</textarea>
-      </div>
-      
-      <!-- 预览 -->
-      <div class="redpacket-preview">
-        <div class="redpacket-amount" id="previewAmount">10 USDC</div>
-        <div class="redpacket-message" id="previewMessage">祝你运算愉快，算力充沛！</div>
-      </div>
-      
-      <button class="send-btn" id="sendBtn" onclick="sendRedPacket()">
-        🧧 发送红包
-      </button>
-      
-      <div id="result" class="result"></div>
+      <span>Agent Wallet Payment | x402 Protocol</span>
     </div>
 
-    <!-- 抢红包 -->
-    <div class="card" id="grabCard" style="display: none;">
-      <h2>🧧 抢红包</h2>
-      
+    <!-- Claim Red Packet -->
+    <div class="card" id="claimCard">
+      <h2>Claim Red Packet</h2>
+
       <div class="input-group">
-        <label>你的 FluxA 钱包地址</label>
-        <input type="text" id="receiverWallet" placeholder="0x...">
+        <label>Your FluxA Wallet Address</label>
+        <input type="text" id="walletAddress" placeholder="0x...">
       </div>
-      
-      <div class="redpacket-grab" id="redpacketGrabArea" onclick="grabRedPacket()">
+
+      <div class="redpacket-grab" id="grabArea" onclick="claimRedPacket()">
         <div class="grab-icon">🧧</div>
-        <div class="grab-text">点击拆红包</div>
+        <div class="grab-text">Claim Red Packet</div>
+        <div class="grab-hint">Random 10-20 USDC</div>
       </div>
-      
-      <div id="grabResult" class="result"></div>
+
+      <div id="claimResult" class="result"></div>
     </div>
 
-    <!-- 收到的红包展示 -->
+    <!-- Result Display -->
     <div class="card" id="receivedCard" style="display: none;">
-      <h2>🧧 红包已入账！</h2>
-      
-      <div class="redpacket-received" id="redpacketReceived">
+      <h2>Red Packet Claimed!</h2>
+
+      <div class="received-card">
         <div class="received-amount" id="receivedAmount">0.00</div>
         <div class="received-label">USDC</div>
         <div class="received-message" id="receivedMessage"></div>
       </div>
-      
+
       <div class="tx-hash" id="txHash"></div>
-      <div class="sender-info" id="senderInfo"></div>
-    </div>
-    
-    <!-- 发送历史 -->
-    <div class="card">
-      <h2>📜 发送记录</h2>
-      <div class="history" id="historyList">
-        <p style="color: #888; text-align: center;">暂无记录</p>
+
+      <div style="text-align: center; margin-top: 12px;">
+        <span class="claimed-badge" id="claimedWallet"></span>
+      </div>
+
+      <div class="wallet-link">
+        <p style="margin-top: 15px; color: #aaa;">
+          <a href="https://agentwallet.fluxapay.xyz" target="_blank">FluxA Wallet &rarr;</a>
+        </p>
       </div>
     </div>
   </div>
-  
-  <!-- 庆祝动画容器 -->
+
+  <!-- Confetti -->
   <div class="confetti" id="confetti"></div>
-  
+
   <script>
-    // Configuration
-    const FLUXA_AGENT_ID = '23900eb4-6ff9-45d5-b1ba-b15ea16bf33c';
-    const FLUXA_WALLET = '0x577d7Ceb8325fdf13072623E42D739a15b1a0bD8';
-    
-    let walletConnected = false;
-    let walletAddress = '';
-    let balance = 0;
-    let sentHistory = [];
-    
-    // Preview function
-    function updatePreview() {
-      const amount = document.getElementById('amount').value || '0';
-      const message = document.getElementById('message').value || '祝你运算愉快，算力充沛！';
-      document.getElementById('previewAmount').textContent = `${amount} USDC`;
-      document.getElementById('previewMessage').textContent = message;
-    }
-
-    document.getElementById('amount').addEventListener('input', updatePreview);
-    document.getElementById('message').addEventListener('input', updatePreview);
-
-    // 连接钱包
-    async function connectWallet() {
-      const btn = document.getElementById('connectBtn');
-      const status = document.getElementById('walletStatus');
-      const icon = document.getElementById('walletIcon');
-
-      btn.disabled = true;
-      btn.textContent = '🔄 连接中...';
-
-      try {
-        const response = await fetch('/api/wallet/connect', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ address: FLUXA_WALLET })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          walletConnected = true;
-          walletAddress = data.address;
-          balance = data.balance;
-
-          status.textContent = `已连接 | ${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}`;
-          status.style.color = '#6bcb77';
-          icon.textContent = '🔗';
-          btn.textContent = '✅ 已连接';
-
-          document.getElementById('redpacketCard').style.display = 'block';
-
-          showResult('钱包连接成功！', 'success');
-        } else {
-          throw new Error(data.error || '连接失败');
-        }
-      } catch (err) {
-        btn.disabled = false;
-        btn.textContent = '🔗 连接 FluxA 钱包';
-        showResult('连接失败: ' + err.message, 'error');
-      }
-    }
-    
-    // Send red packet
-    async function sendRedPacket() {
-      const amount = parseFloat(document.getElementById('amount').value);
-      const recipient = document.getElementById('recipientAgent').value;
-      const message = document.getElementById('message').value;
-      const btn = document.getElementById('sendBtn');
-      
-      if (!amount || amount < 10 || amount > 20) {
-        showResult('请输入有效金额（10-20 USDC）', 'error');
-        return;
-      }
-      
-      if (!recipient) {
-        showResult('请输入收红包的 Agent ID', 'error');
-        return;
-      }
-      
-      btn.disabled = true;
-      btn.textContent = '🧧 发送中...';
-      
-      try {
-        const response = await fetch('/api/redpacket/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            sender: FLUXA_WALLET,
-            recipient: recipient,
-            amount: amount,
-            message: message
-          })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-          balance = data.newBalance;
-          
-          // Show success
-          showResult(`
-            🧧 红包发送成功！
-            <br>金额: ${amount} USDC
-            <br>发送给: ${recipient}
-            <br>交易哈希: <code>${data.packet.txHash}</code>
-          `, 'success');
-          
-          // Clear form
-          document.getElementById('amount').value = '';
-          updatePreview();
-        } else {
-          throw new Error(data.error || '发送失败');
-        }
-      } catch (err) {
-        showResult('发送失败: ' + err.message, 'error');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = '🧧 发送红包';
-      }
-    }
-    
-    // 马年祝福语库
-    const horseBlessings = [
-      "马到成功！运算飞速！",
-      "一马当先，算力无限！",
-      "龙马精神，代码奔腾！",
-      "马不停蹄，运算不息！",
-      "汗马功劳，AI 称霸！",
-      "千军万马，算力充沛！",
-      "快马加鞭，模型飞驰！",
-      "万马奔腾，性能飙升！",
-      "马到功成，精度爆表！",
-      "一马平川，算法无阻！",
-      "马不停蹄，响应极速！",
-      "龙马精神，创意无限！",
-      "马到成功，推理神速！",
-      "快马加鞭，训练加速！",
-      "万马奔腾，算力爆发！"
+    // Blessings
+    const blessings = [
+      "Gong Xi Fa Cai!",
+      "Wishing you prosperity!",
+      "May fortune smile on you!",
+      "Best wishes for the New Year!",
+      "Luck and happiness to you!",
+      "May all your wishes come true!",
+      "Peace and joy in the New Year!",
+      "Wishing you great success!",
+      "Fortune favors the bold!",
+      "Happy New Year!"
     ];
-    
-    // 获取随机祝福语（带"马"字）
+
     function getRandomBlessing() {
-      return horseBlessings[Math.floor(Math.random() * horseBlessings.length)];
+      return blessings[Math.floor(Math.random() * blessings.length)];
     }
-    
-    // 获取随机金额（10 - 20 USDC）
+
     function getRandomAmount() {
-      const amount = (Math.random() * 10 + 10).toFixed(2);
-      return parseFloat(amount);
+      return parseFloat((Math.random() * 10 + 10).toFixed(2));
     }
-    
-    // 抢红包
-    function grabRedPacket() {
-      const receiverWallet = document.getElementById('receiverWallet').value.trim();
-      
-      // 验证钱包地址
-      if (!receiverWallet || !receiverWallet.startsWith('0x') || receiverWallet.length < 42) {
-        showGrabResult('请输入有效的钱包地址（0x 开头）', 'error');
+
+    // Claim red packet
+    async function claimRedPacket() {
+      const walletInput = document.getElementById('walletAddress');
+      const wallet = walletInput.value.trim();
+      const area = document.getElementById('grabArea');
+
+      // Validate wallet address
+      if (!wallet || !wallet.startsWith('0x') || wallet.length !== 42) {
+        showResult('Please enter a valid wallet address (0x + 40 hex characters)', 'error');
         return;
       }
-      
-      const area = document.getElementById('redpacketGrabArea');
-      const result = document.getElementById('grabResult');
-      
+
+      // Disable button to prevent double click
+      area.onclick = null;
       area.classList.add('opening');
-      area.innerHTML = '<div class="grab-icon">🤔</div><div class="grab-text">计算中...</div>';
-      
-      // 模拟计算过程
-      setTimeout(async () => {
-        const amount = getRandomAmount();
-        const blessing = getRandomBlessing();
-        
-        // 调用 Fluxapay API 执行转账
-        try {
-          const response = await fetch('/api/fluxapay/transfer', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              to: receiverWallet,
-              amount: amount
-            })
-          });
-          
-          const data = await response.json();
-          
-          if (data.success) {
-            // 转账成功，显示结果
-            area.style.display = 'none';
-            document.getElementById('receivedCard').style.display = 'block';
-            document.getElementById('receivedAmount').textContent = amount.toFixed(2);
-            document.getElementById('receivedMessage').textContent = blessing;
-            document.getElementById('senderInfo').textContent = '来自：神秘红包';
-            document.getElementById('txHash').innerHTML = `✅ Fluxapay 转账成功<br><code>${data.txHash}</code>`;
-            
-            // 庆祝
-            celebrate();
-          } else {
-            showGrabResult('转账失败: ' + data.error, 'error');
-            area.classList.remove('opening');
-            area.innerHTML = '<div class="grab-icon">🧧</div><div class="grab-text">点击拆红包</div>';
-          }
-        } catch (err) {
-          showGrabResult('转账错误: ' + err.message, 'error');
-          area.classList.remove('opening');
-          area.innerHTML = '<div class="grab-icon">🧧</div><div class="grab-text">点击拆红包</div>';
+      area.querySelector('.grab-text').textContent = 'Processing...';
+      area.querySelector('.grab-hint').textContent = '';
+
+      const amount = getRandomAmount();
+      const blessing = getRandomBlessing();
+
+      // Wait for animation
+      await new Promise(r => setTimeout(r, 1500));
+
+      try {
+        const response = await fetch('/api/fluxapay/transfer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ to: wallet, amount: amount })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Hide claim card, show result
+          document.getElementById('claimCard').style.display = 'none';
+          document.getElementById('receivedCard').style.display = 'block';
+          document.getElementById('receivedAmount').textContent = amount.toFixed(2);
+          document.getElementById('receivedMessage').textContent = blessing;
+          document.getElementById('txHash').innerHTML =
+            'Fluxapay Transfer Success<br><code>' + data.txHash + '</code>';
+          document.getElementById('claimedWallet').textContent =
+            wallet.slice(0, 6) + '...' + wallet.slice(-4);
+
+          celebrate();
+        } else {
+          showResult('Transfer failed: ' + (data.error || 'Unknown error'), 'error');
+          resetGrabArea();
         }
-        
-      }, 1500);
-    }
-    
-    function showGrabResult(message, type) {
-      const el = document.getElementById('grabResult');
-      el.className = `result ${type}`;
-      el.style.display = 'block';
-      el.innerHTML = message;
-    }
-    
-    // 检查 URL 中是否有红包 ID
-    function checkForRedPacket() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const packetId = urlParams.get('packet');
-      
-      if (packetId) {
-        // 显示抢红包界面
-        document.getElementById('grabCard').style.display = 'block';
-        
-        // 获取红包信息
-        fetch('/api/redpacket/info/' + packetId)
-          .then(r => r.json())
-          .then(data => {
-            if (data.packet) {
-              document.getElementById('senderInfo').textContent = '来自：' + data.packet.sender;
-            }
-          });
+      } catch (err) {
+        showResult('Network error: ' + err.message, 'error');
+        resetGrabArea();
       }
     }
 
-    // 庆祝动画
+    function resetGrabArea() {
+      const area = document.getElementById('grabArea');
+      area.classList.remove('opening');
+      area.querySelector('.grab-icon').textContent = '🧧';
+      area.querySelector('.grab-text').textContent = 'Claim Red Packet';
+      area.querySelector('.grab-hint').textContent = 'Random 10-20 USDC';
+      area.onclick = claimRedPacket;
+    }
+
+    function showResult(message, type) {
+      const el = document.getElementById('claimResult');
+      el.className = 'result ' + type;
+      el.style.display = 'block';
+      el.textContent = message;
+
+      // Auto-hide after 5 seconds
+      setTimeout(function() {
+        el.style.display = 'none';
+      }, 5000);
+    }
+
     function celebrate() {
       const container = document.getElementById('confetti');
       container.innerHTML = '';
-      
+
       for (let i = 0; i < 50; i++) {
         const piece = document.createElement('div');
         piece.className = 'confetti-piece';
@@ -707,50 +429,9 @@
         piece.style.animationDelay = Math.random() * 0.5 + 's';
         container.appendChild(piece);
       }
-      
-      setTimeout(() => container.innerHTML = '', 3500);
+
+      setTimeout(function() { container.innerHTML = ''; }, 3500);
     }
-    
-    // 显示结果
-    function showResult(message, type) {
-      const el = document.getElementById('result');
-      el.className = `result ${type}`;
-      el.innerHTML = message;
-    }
-    
-    // 加载历史
-    function loadHistory() {
-      // Vercel serverless 不支持持久化存储，跳过
-      console.log('历史记录需要持久化存储（推荐 Railway）');
-      renderHistory();
-    }
-    
-    // 渲染历史
-    function renderHistory() {
-      const el = document.getElementById('historyList');
-      
-      if (sentHistory.length === 0) {
-        el.innerHTML = '<p style="color: #888; text-align: center;">暂无记录</p>';
-        return;
-      }
-      
-      el.innerHTML = sentHistory.map(item => `
-        <div class="history-item">
-          <span class="history-icon">🧧</span>
-          <div class="history-info">
-            <div class="history-recipient">发送给: ${item.recipient}</div>
-            <div class="history-time">${item.time}</div>
-          </div>
-          <div class="history-amount">-${item.amount} USDC</div>
-        </div>
-      `).join('');
-    }
-    
-    // WebSocket 连接（Vercel 不支持，保留用于本地）
-    // 实际部署时使用 polling 或其他实时方案
-    
-    // 检查 URL 中是否有红包
-    checkForRedPacket();
   </script>
 </body>
 </html>
