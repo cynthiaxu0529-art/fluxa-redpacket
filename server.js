@@ -76,10 +76,10 @@ app.post('/api/redpacket/send', (req, res) => {
   const { sender, recipient, amount, message } = req.body;
   
   // 验证参数
-  if (!sender || !recipient || !amount || amount < 0.1) {
+  if (!sender || !recipient || !amount || amount < 10 || amount > 20) {
     return res.status(400).json({
       success: false,
-      error: 'Invalid parameters. Required: sender, recipient, amount >= 0.1'
+      error: 'Invalid parameters. Required: sender, recipient, amount 10-20 USDC'
     });
   }
   
