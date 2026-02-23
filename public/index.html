@@ -380,10 +380,18 @@
           document.getElementById('receivedCard').style.display = 'block';
           document.getElementById('receivedAmount').textContent = amount.toFixed(2);
           document.getElementById('receivedMessage').textContent = blessing;
-          document.getElementById('txHash').innerHTML =
-            'Fluxapay Transfer Success<br><code>' + data.txHash + '</code>';
           document.getElementById('claimedWallet').textContent =
             wallet.slice(0, 6) + '...' + wallet.slice(-4);
+
+          // Show status based on payout response
+          var txEl = document.getElementById('txHash');
+          if (data.txHash) {
+            txEl.innerHTML = 'Fluxapay Transfer Success<br><code>' + data.txHash + '</code>';
+          } else if (data.status === 'pending_authorization') {
+            txEl.innerHTML = 'Payout submitted! Payout ID: <code>' + (data.payoutId || '') + '</code>';
+          } else {
+            txEl.innerHTML = 'Payout submitted! Status: ' + (data.status || 'processing');
+          }
 
           celebrate();
         } else {
